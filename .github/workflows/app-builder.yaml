@@ -257,13 +257,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Generate Token
-        uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
-        id: app-token
-        with:
-          app-id: ${{ secrets.BOT_APP_ID }}
-          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-
       - name: Get Application Options
         id: app-options
         uses: ./.github/actions/app-options
@@ -274,7 +267,7 @@ jobs:
         uses: ./.github/actions/release-tag
         id: release
         with:
-          token: ${{ steps.app-token.outputs.token }}
+          token: ${{ github.token }}
 
       - name: Create Release
         uses: ncipollo/release-action@440c8c1cb0ed28b9f43e4d1d670870f059653174 # v1.16.0
@@ -288,7 +281,7 @@ jobs:
             **Name**: [${{ inputs.app }}](https://github.com/${{ github.repository }}/pkgs/container/${{ inputs.app }})
             **Source**: <${{ steps.app-options.outputs.source }}>
           tag: ${{ steps.release.outputs.tag }}
-          token: ${{ steps.app-token.outputs.token }}
+          token: ${{ github.token }}
 
   notify:
     if: ${{ inputs.release && !cancelled() }}
